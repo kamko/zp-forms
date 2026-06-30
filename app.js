@@ -172,6 +172,7 @@
     document.querySelectorAll("[data-view-select]").forEach((button) => {
       const isActive = button.dataset.viewSelect === activeView;
       button.setAttribute("aria-pressed", String(isActive));
+      button.classList.toggle("is-active", isActive);
     });
 
   }
