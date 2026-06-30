@@ -1,15 +1,65 @@
 (function () {
   const { PDFDocument, rgb } = PDFLib;
-  const STORAGE_KEY = "zpFormsData.v1";
+
+  const LEGACY_STORAGE_KEY = "zpFormsData.v1";
+  const STORAGE_KEYS = {
+    profile: "zpForms.profile.v2",
+    zp4: "zpForms.zp4.v1",
+    zp6: "zpForms.zp6.v1",
+  };
+
   const stateNode = document.getElementById("saveState");
   const statusNode = document.getElementById("status");
   const form = document.getElementById("dataForm");
   const isFileProtocol = window.location.protocol === "file:";
 
-  const DEFAULT_STATE = {
+  const today = new Date().toISOString().slice(0, 10);
+  const PROFILE_DEFAULTS = {
     addressType: "permanent",
     documentType: "zp",
-    formDate: new Date().toISOString().slice(0, 10),
+  };
+  const FORM_DEFAULTS = {
+    zp4: { formDate: today },
+    zp6: { formDate: today },
+  };
+
+  const PROFILE_FIELDS = [
+    "identityName",
+    "birthNumber",
+    "birthDate",
+    "addressType",
+    "permanentAddress",
+    "temporaryAddress",
+    "phone",
+    "email",
+    "permitNumber",
+    "permitGroups",
+    "documentType",
+  ];
+
+  const FORM_FIELD_MAP = {
+    zp4: {
+      zp4WeaponKind: "weaponKind",
+      zp4WeaponBrand: "weaponBrand",
+      zp4WeaponModel: "weaponModel",
+      zp4WeaponSerial: "weaponSerial",
+      zp4WeaponCaliber: "weaponCaliber",
+      zp4Justification: "justification",
+      zp4ExceptionDecision: "exceptionDecision",
+      zp4Place: "place",
+      zp4FormDate: "formDate",
+    },
+    zp6: {
+      zp6WeaponKind: "weaponKind",
+      zp6WeaponBrand: "weaponBrand",
+      zp6WeaponModel: "weaponModel",
+      zp6WeaponSerial: "weaponSerial",
+      zp6WeaponCaliber: "weaponCaliber",
+      zp6AcquiredFrom: "acquiredFrom",
+      zp6ExceptionDecision: "exceptionDecision",
+      zp6Place: "place",
+      zp6FormDate: "formDate",
+    },
   };
 
   const TEXT = rgb(0.06, 0.06, 0.055);
@@ -17,19 +67,19 @@
   const PDF_FONT_SIZE = 11;
 
   const zp6First = [
-    { field: "identityName", x: 250, y: 716, w: 161, clearX: 242 },
-    { field: "birthNumber", x: 468, y: 716, w: 76, clearX: 456 },
-    { field: "permitNumber", x: 312, y: 702, w: 100, clearX: 302 },
-    { field: "permitGroups", x: 510, y: 702, w: 38, clearX: 500 },
-    { field: "weaponKind", x: 358, y: 650, w: 190, clearX: 348 },
-    { field: "weaponBrand", x: 254, y: 630, w: 294, clearX: 246 },
-    { field: "weaponModel", x: 176, y: 612, w: 372, clearX: 166 },
-    { field: "weaponSerial", x: 184, y: 592, w: 194, clearX: 174 },
-    { field: "weaponCaliber", x: 474, y: 592, w: 74, clearX: 466 },
-    { field: "acquiredFrom", x: 246, y: 573, w: 302, clearX: 238 },
-    { field: "exceptionDecision", x: 78, y: 520, w: 469, clearX: 72 },
-    { field: "place", x: 84, y: 496, w: 118, clearX: 78 },
-    { value: (data) => formatDateSk(data.formDate), x: 224, y: 496, w: 103, clearX: 216 },
+    { field: "identityName", x: 250, y: 718, w: 158, clearX: 238 },
+    { field: "birthNumber", x: 466, y: 718, w: 78, clearX: 458 },
+    { field: "permitNumber", x: 314, y: 704, w: 92, clearX: 306 },
+    { field: "permitGroups", x: 510, y: 704, w: 34, clearX: 502 },
+    { field: "weaponKind", x: 356, y: 652, w: 188, clearX: 348 },
+    { field: "weaponBrand", x: 252, y: 632, w: 292, clearX: 244 },
+    { field: "weaponModel", x: 176, y: 614, w: 368, clearX: 168 },
+    { field: "weaponSerial", x: 184, y: 594, w: 190, clearX: 176 },
+    { field: "weaponCaliber", x: 476, y: 594, w: 68, clearX: 468 },
+    { field: "acquiredFrom", x: 248, y: 575, w: 296, clearX: 240 },
+    { field: "exceptionDecision", x: 78, y: 522, w: 466, clearX: 72 },
+    { field: "place", x: 84, y: 498, w: 116, clearX: 78 },
+    { value: (data) => formatDateSk(data.formDate), x: 224, y: 498, w: 102, clearX: 216 },
   ];
 
   const FORM_CONFIGS = {
@@ -65,12 +115,12 @@
       crop: { left: 0, bottom: 407, right: 595.32, top: 842.04 },
       draws: [...zp6First],
       strikes: [
-        { when: (data) => data.documentType === "zp", x1: 203, y1: 721, x2: 239, y2: 721 },
-        { when: (data) => data.documentType === "zp", x1: 248, y1: 707, x2: 304, y2: 707 },
-        { when: (data) => data.documentType === "zp", x1: 479, y1: 707, x2: 492, y2: 707 },
-        { when: (data) => data.documentType === "zl", x1: 125, y1: 721, x2: 190, y2: 721 },
-        { when: (data) => data.documentType === "zl", x1: 168, y1: 707, x2: 239, y2: 707 },
-        { when: (data) => data.documentType === "zl", x1: 462, y1: 707, x2: 477, y2: 707 },
+        { when: (data) => data.documentType === "zp", x1: 190, y1: 722, x2: 236, y2: 722 },
+        { when: (data) => data.documentType === "zp", x1: 240, y1: 708, x2: 311, y2: 708 },
+        { when: (data) => data.documentType === "zp", x1: 480, y1: 708, x2: 498, y2: 708 },
+        { when: (data) => data.documentType === "zl", x1: 73, y1: 722, x2: 190, y2: 722 },
+        { when: (data) => data.documentType === "zl", x1: 168, y1: 708, x2: 239, y2: 708 },
+        { when: (data) => data.documentType === "zl", x1: 462, y1: 708, x2: 477, y2: 708 },
       ],
     },
   };
@@ -79,8 +129,9 @@
   if (isFileProtocol) {
     setStatus("Otvorené cez file://. Pre sťahovanie PDF spusti lokálny server a otvor http://127.0.0.1:5173.");
   }
-  form.addEventListener("input", saveFromForm);
-  form.addEventListener("change", saveFromForm);
+
+  form.addEventListener("input", handleInput);
+  form.addEventListener("change", handleInput);
   document.getElementById("clearData").addEventListener("click", clearData);
 
   document.querySelectorAll("[data-download]").forEach((button) => {
@@ -92,12 +143,11 @@
           throw new Error("PDF sa nedá načítať cez file://. Spusti: python -m http.server 5173 a otvor http://127.0.0.1:5173");
         }
         setStatus("Pripravujem PDF...");
-        const data = readForm();
         if (target === "both") {
-          await fillAndDownload("zp4", data);
-          await fillAndDownload("zp6", data);
+          await fillAndDownload("zp4");
+          await fillAndDownload("zp6");
         } else {
-          await fillAndDownload(target, data);
+          await fillAndDownload(target);
         }
         setStatus("PDF je pripravené.");
       } catch (error) {
@@ -110,49 +160,125 @@
   });
 
   function hydrateForm() {
-    const data = { ...DEFAULT_STATE, ...readStored() };
-    for (const element of form.elements) {
-      if (!element.name) continue;
-      const value = data[element.name] ?? "";
-      if (element.type === "radio") {
-        element.checked = element.value === value;
-      } else {
-        element.value = value;
-      }
-    }
+    const legacy = readJson(LEGACY_STORAGE_KEY);
+    const profile = { ...PROFILE_DEFAULTS, ...pick(legacy, PROFILE_FIELDS), ...readJson(STORAGE_KEYS.profile) };
+    const zp4 = { ...FORM_DEFAULTS.zp4, ...fromLegacyForm(legacy), ...readJson(STORAGE_KEYS.zp4) };
+    const zp6 = { ...FORM_DEFAULTS.zp6, ...fromLegacyForm(legacy), ...readJson(STORAGE_KEYS.zp6) };
+
+    hydrateProfile(profile);
+    hydrateFormScope("zp4", zp4);
+    hydrateFormScope("zp6", zp6);
+    saveScope("profile");
+    saveScope("zp4");
+    saveScope("zp6");
     markSaved("Uložené lokálne");
   }
 
-  function readStored() {
+  function hydrateProfile(data) {
+    for (const name of PROFILE_FIELDS) {
+      setControlValue(name, data[name] ?? "");
+    }
+  }
+
+  function hydrateFormScope(scope, data) {
+    for (const [controlName, dataName] of Object.entries(FORM_FIELD_MAP[scope])) {
+      setControlValue(controlName, data[dataName] ?? "");
+    }
+  }
+
+  function setControlValue(name, value) {
+    const controls = form.elements[name];
+    if (!controls) return;
+    if (controls instanceof RadioNodeList) {
+      controls.value = value;
+      return;
+    }
+    controls.value = value;
+  }
+
+  function handleInput(event) {
+    const scope = scopeForName(event.target.name);
+    if (!scope) return;
+    saveScope(scope);
+    markSaved(scope === "profile" ? "Profil uložený" : `${scope.toUpperCase()} uložené`);
+  }
+
+  function scopeForName(name) {
+    if (!name) return "";
+    if (name.startsWith("zp4")) return "zp4";
+    if (name.startsWith("zp6")) return "zp6";
+    return PROFILE_FIELDS.includes(name) ? "profile" : "";
+  }
+
+  function saveScope(scope) {
+    localStorage.setItem(STORAGE_KEYS[scope], JSON.stringify(readScope(scope)));
+  }
+
+  function readScope(scope) {
+    if (scope === "profile") return readProfile();
+    return readFormScope(scope);
+  }
+
+  function readProfile() {
+    const data = {};
+    for (const name of PROFILE_FIELDS) {
+      const controls = form.elements[name];
+      if (!controls) continue;
+      data[name] = controls instanceof RadioNodeList ? controls.value : controls.value.trim();
+    }
+    return { ...PROFILE_DEFAULTS, ...data };
+  }
+
+  function readFormScope(scope) {
+    const data = {};
+    for (const [controlName, dataName] of Object.entries(FORM_FIELD_MAP[scope])) {
+      const control = form.elements[controlName];
+      data[dataName] = control ? control.value.trim() : "";
+    }
+    return { ...FORM_DEFAULTS[scope], ...data };
+  }
+
+  function readDataFor(formKey) {
+    return { ...readProfile(), ...readFormScope(formKey) };
+  }
+
+  function clearData() {
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
+    Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
+    hydrateForm();
+    setStatus("Uložené údaje boli vymazané.");
+  }
+
+  function readJson(key) {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      return JSON.parse(localStorage.getItem(key) || "{}") || {};
     } catch {
       return {};
     }
   }
 
-  function readForm() {
-    const data = {};
-    for (const element of form.elements) {
-      if (!element.name || element.disabled) continue;
-      if (element.type === "radio") {
-        if (element.checked) data[element.name] = element.value;
-      } else {
-        data[element.name] = element.value.trim();
-      }
+  function pick(source, keys) {
+    const out = {};
+    if (!source) return out;
+    for (const key of keys) {
+      if (source[key] !== undefined) out[key] = source[key];
     }
-    return { ...DEFAULT_STATE, ...data };
+    return out;
   }
 
-  function saveFromForm() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(readForm()));
-    markSaved("Uložené");
-  }
-
-  function clearData() {
-    localStorage.removeItem(STORAGE_KEY);
-    hydrateForm();
-    setStatus("Uložené údaje boli vymazané.");
+  function fromLegacyForm(source) {
+    return pick(source, [
+      "weaponKind",
+      "weaponBrand",
+      "weaponModel",
+      "weaponSerial",
+      "weaponCaliber",
+      "acquiredFrom",
+      "justification",
+      "exceptionDecision",
+      "place",
+      "formDate",
+    ]);
   }
 
   function markSaved(text) {
@@ -163,8 +289,10 @@
     }, 900);
   }
 
-  async function fillAndDownload(formKey, data) {
+  async function fillAndDownload(formKey) {
     const config = FORM_CONFIGS[formKey];
+    const data = readDataFor(formKey);
+
     const [templateBytes, fontBytes] = await Promise.all([
       fetchBytes(config.templatePath),
       fetchBytes("fonts/NotoSerif-Regular.ttf"),
@@ -225,7 +353,7 @@
     page.drawLine({
       start: { x: strike.x1, y: strike.y1 },
       end: { x: strike.x2, y: strike.y2 },
-      thickness: 0.8,
+      thickness: 0.65,
       color: TEXT,
     });
   }
@@ -243,20 +371,11 @@
     const textWidth = Math.min(font.widthOfTextAtSize(text, fontSize), maxWidth);
     const clearX = item.clearX ?? x - 3;
     const clearRight = Math.min(x + textWidth + 15, x + maxWidth);
-    if (item.lineClearX && item.lineClearX < x) {
-      page.drawRectangle({
-        x: item.lineClearX,
-        y: y - 2,
-        width: x - item.lineClearX,
-        height: 7,
-        color: PAPER,
-      });
-    }
     page.drawRectangle({
       x: clearX,
-      y: y - 2,
+      y: y - 4,
       width: Math.max(clearRight - clearX, textWidth + 12),
-      height: 8,
+      height: 12,
       color: PAPER,
     });
     page.drawText(text, { x, y, size: fontSize, font, color: TEXT });
