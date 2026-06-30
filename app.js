@@ -20,7 +20,7 @@
     { field: "identityName", x: 250, y: 716, w: 161, clearX: 242 },
     { field: "birthNumber", x: 468, y: 716, w: 76, clearX: 456 },
     { field: "permitNumber", x: 312, y: 702, w: 100, clearX: 302 },
-    { field: "permitGroups", x: 522, y: 702, w: 26, clearX: 512 },
+    { field: "permitGroups", x: 510, y: 702, w: 38, clearX: 500 },
     { field: "weaponKind", x: 358, y: 650, w: 190, clearX: 348 },
     { field: "weaponBrand", x: 254, y: 630, w: 294, clearX: 246 },
     { field: "weaponModel", x: 176, y: 612, w: 372, clearX: 166 },
@@ -47,8 +47,8 @@
         { field: "phone", x: 174, y: 576, w: 135, clearX: 170 },
         { field: "email", x: 366, y: 576, w: 183, clearX: 360 },
         { field: "permitNumber", x: 231, y: 554, w: 94, clearX: 225 },
-        { field: "permitGroups", x: 495, y: 554, w: 54, clearX: 486 },
-        { field: "weaponKind", x: 272, y: 501, w: 277, clearX: 268, lineClearX: 252 },
+        { field: "permitGroups", x: 488, y: 554, w: 61, clearX: 480 },
+        { field: "weaponKind", x: 274, y: 501, w: 275, clearX: 266 },
         { field: "weaponBrand", x: 251, y: 481, w: 298, clearX: 245 },
         { field: "weaponSerial", x: 273, y: 460, w: 276, clearX: 266 },
         { field: "weaponModel", x: 176, y: 440, w: 373, clearX: 171 },
@@ -242,21 +242,21 @@
     }
     const textWidth = Math.min(font.widthOfTextAtSize(text, fontSize), maxWidth);
     const clearX = item.clearX ?? x - 3;
-    const clearRight = Math.min(x + textWidth + 5, x + maxWidth);
+    const clearRight = Math.min(x + textWidth + 15, x + maxWidth);
     if (item.lineClearX && item.lineClearX < x) {
       page.drawRectangle({
         x: item.lineClearX,
-        y: y + 1,
+        y: y - 2,
         width: x - item.lineClearX,
-        height: 3,
+        height: 7,
         color: PAPER,
       });
     }
     page.drawRectangle({
       x: clearX,
       y: y - 2,
-      width: Math.max(clearRight - clearX, textWidth + 5),
-      height: fontSize + 5,
+      width: Math.max(clearRight - clearX, textWidth + 12),
+      height: 8,
       color: PAPER,
     });
     page.drawText(text, { x, y, size: fontSize, font, color: TEXT });
