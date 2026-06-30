@@ -67,9 +67,9 @@
   const PDF_FONT_SIZE = 11;
 
   const zp6First = [
-    { field: "identityName", x: 250, y: 718, w: 158, clearX: 238 },
+    { field: "identityName", x: 266, y: 718, w: 142, clearX: 238 },
     { field: "birthNumber", x: 466, y: 718, w: 78, clearX: 458 },
-    { field: "permitNumber", x: 314, y: 704, w: 92, clearX: 306 },
+    { field: "permitNumber", x: 326, y: 704, w: 80, clearX: 306 },
     { field: "permitGroups", x: 510, y: 704, w: 34, clearX: 502 },
     { field: "weaponKind", x: 356, y: 652, w: 188, clearX: 348 },
     { field: "weaponBrand", x: 252, y: 632, w: 292, clearX: 244 },
@@ -115,7 +115,7 @@
       crop: { left: 0, bottom: 407, right: 595.32, top: 842.04 },
       draws: [...zp6First],
       strikes: [
-        { when: (data) => data.documentType === "zp", x1: 190, y1: 722, x2: 236, y2: 722 },
+        { when: (data) => data.documentType === "zp", x1: 191, y1: 722, x2: 236, y2: 722 },
         { when: (data) => data.documentType === "zp", x1: 240, y1: 708, x2: 311, y2: 708 },
         { when: (data) => data.documentType === "zp", x1: 480, y1: 708, x2: 498, y2: 708 },
         { when: (data) => data.documentType === "zl", x1: 73, y1: 722, x2: 190, y2: 722 },
