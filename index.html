@@ -18,113 +18,135 @@
       </header>
 
       <form class="layout" id="dataForm">
-        <section class="panel profile-panel" aria-labelledby="profileTitle">
+        <nav class="panel workspace-nav" aria-labelledby="workspaceTitle">
           <div class="section-heading">
             <span>01</span>
             <div>
-              <h2 id="profileTitle">Profil žiadateľa</h2>
-              <p>Ukladá sa pre ďalšie použitie.</p>
+              <h2 id="workspaceTitle">Čo vyplniť</h2>
+              <p>Profil je spoločný, formuláre majú vlastné údaje.</p>
             </div>
           </div>
 
-          <label class="field field-wide">
-            <span>Titul, meno a priezvisko</span>
-            <input name="identityName" autocomplete="name" />
-          </label>
-
-          <div class="grid two">
-            <label class="field">
-              <span>Rodné číslo</span>
-              <input name="birthNumber" inputmode="text" />
-            </label>
-            <label class="field">
-              <span>Dátum narodenia</span>
-              <input name="birthDate" type="date" />
-            </label>
+          <div class="workspace-list" aria-label="Položky">
+            <button type="button" data-view-select="profile" aria-pressed="true">
+              <strong>Profil</strong>
+              <span>Osobné údaje žiadateľa</span>
+            </button>
+            <button type="button" data-view-select="zp4" aria-pressed="false">
+              <strong>ZP-4</strong>
+              <span>Nákupné povolenie</span>
+            </button>
+            <button type="button" data-view-select="zp6" aria-pressed="false">
+              <strong>ZP-6</strong>
+              <span>Zaevidovanie zbrane</span>
+            </button>
           </div>
 
-          <fieldset class="segmented">
-            <legend>Adresa v ZP-4</legend>
-            <label>
-              <input type="radio" name="addressType" value="permanent" />
-              <span>Trvalý pobyt</span>
-            </label>
-            <label>
-              <input type="radio" name="addressType" value="temporary" />
-              <span>Prechodný pobyt</span>
-            </label>
-          </fieldset>
-
-          <label class="field field-wide">
-            <span>Adresa trvalého pobytu</span>
-            <input name="permanentAddress" autocomplete="street-address" />
-          </label>
-
-          <label class="field field-wide">
-            <span>Adresa prechodného pobytu</span>
-            <input name="temporaryAddress" autocomplete="street-address" />
-          </label>
-
-          <div class="grid two">
-            <label class="field">
-              <span>Telefonický kontakt</span>
-              <input name="phone" autocomplete="tel" />
-            </label>
-            <label class="field">
-              <span>E-mail</span>
-              <input name="email" autocomplete="email" type="email" />
-            </label>
+          <div class="nav-actions">
+            <button type="button" class="danger" id="clearData">
+              Vymazať uložené údaje
+            </button>
+            <p class="status" id="status" role="status" aria-live="polite"></p>
           </div>
+        </nav>
 
-          <div class="grid two">
-            <label class="field">
-              <span>Séria a číslo ZP/ZL</span>
-              <input name="permitNumber" />
-            </label>
-            <label class="field">
-              <span>Skupina/y ZP/ZL</span>
-              <input name="permitGroups" />
-            </label>
-          </div>
-
-          <fieldset class="segmented">
-            <legend>Typ dokladu v ZP-6</legend>
-            <label>
-              <input type="radio" name="documentType" value="zp" />
-              <span>ZP</span>
-            </label>
-            <label>
-              <input type="radio" name="documentType" value="zl" />
-              <span>ZL</span>
-            </label>
-          </fieldset>
-        </section>
-
-        <section class="forms-column" aria-label="Formuláre">
-          <section class="panel chooser-panel" aria-labelledby="chooserTitle">
+        <section class="workspace-column" aria-live="polite">
+          <section class="panel profile-panel" data-view-panel="profile" aria-labelledby="profileTitle">
             <div class="section-heading">
               <span>02</span>
               <div>
-                <h2 id="chooserTitle">Vybrať formulár</h2>
-                <p>Profil ostáva spoločný, údaje nižšie sú iba pre vybraný formulár.</p>
+                <h2 id="profileTitle">Profil žiadateľa</h2>
+                <p>Ukladá sa pre ďalšie použitie.</p>
               </div>
             </div>
 
-            <div class="form-switch" role="tablist" aria-label="Výber formulára">
-              <button type="button" data-form-select="zp4" aria-pressed="true">
-                <strong>ZP-4</strong>
-                <span>Nákupné povolenie</span>
-              </button>
-              <button type="button" data-form-select="zp6" aria-pressed="false">
-                <strong>ZP-6</strong>
-                <span>Zaevidovanie zbrane</span>
-              </button>
+            <div class="profile-groups">
+              <section class="field-group" aria-label="Osobné údaje">
+                <h3>Osobné údaje</h3>
+                <label class="field field-wide">
+                  <span>Titul, meno a priezvisko</span>
+                  <input name="identityName" autocomplete="name" />
+                </label>
+
+                <div class="grid two">
+                  <label class="field">
+                    <span>Rodné číslo</span>
+                    <input name="birthNumber" inputmode="text" />
+                  </label>
+                  <label class="field">
+                    <span>Dátum narodenia</span>
+                    <input name="birthDate" type="date" />
+                  </label>
+                </div>
+              </section>
+
+              <section class="field-group" aria-label="Adresa">
+                <h3>Adresa</h3>
+                <fieldset class="segmented">
+                  <legend>Adresa v ZP-4</legend>
+                  <label>
+                    <input type="radio" name="addressType" value="permanent" />
+                    <span>Trvalý pobyt</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="addressType" value="temporary" />
+                    <span>Prechodný pobyt</span>
+                  </label>
+                </fieldset>
+
+                <label class="field field-wide">
+                  <span>Adresa trvalého pobytu</span>
+                  <input name="permanentAddress" autocomplete="street-address" />
+                </label>
+
+                <label class="field field-wide">
+                  <span>Adresa prechodného pobytu</span>
+                  <input name="temporaryAddress" autocomplete="street-address" />
+                </label>
+              </section>
+
+              <section class="field-group" aria-label="Kontakt a doklad">
+                <h3>Kontakt a doklad</h3>
+                <div class="grid two">
+                  <label class="field">
+                    <span>Telefonický kontakt</span>
+                    <input name="phone" autocomplete="tel" />
+                  </label>
+                  <label class="field">
+                    <span>E-mail</span>
+                    <input name="email" autocomplete="email" type="email" />
+                  </label>
+                </div>
+
+                <div class="grid two">
+                  <label class="field">
+                    <span>Séria a číslo ZP/ZL</span>
+                    <input name="permitNumber" />
+                  </label>
+                  <label class="field">
+                    <span>Skupina/y ZP/ZL</span>
+                    <input name="permitGroups" />
+                  </label>
+                </div>
+
+                <fieldset class="segmented">
+                  <legend>Typ dokladu v ZP-6</legend>
+                  <label>
+                    <input type="radio" name="documentType" value="zp" />
+                    <span>ZP</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="documentType" value="zl" />
+                    <span>ZL</span>
+                  </label>
+                </fieldset>
+              </section>
             </div>
           </section>
 
-          <section class="panel form-panel" data-form-panel="zp4" aria-labelledby="zp4Title">
+          <section class="panel form-panel" data-view-panel="zp4" aria-labelledby="zp4Title" hidden>
             <div class="section-heading">
-              <span>03</span>
+              <span>02</span>
               <div>
                 <h2 id="zp4Title">ZP-4: nákupné povolenie</h2>
                 <p>Údaje iba pre žiadosť o vydanie nákupného povolenia.</p>
@@ -184,9 +206,9 @@
             </button>
           </section>
 
-          <section class="panel form-panel" data-form-panel="zp6" aria-labelledby="zp6Title" hidden>
+          <section class="panel form-panel" data-view-panel="zp6" aria-labelledby="zp6Title" hidden>
             <div class="section-heading">
-              <span>03</span>
+              <span>02</span>
               <div>
                 <h2 id="zp6Title">ZP-6: zaevidovanie zbrane</h2>
                 <p>Údaje iba pre zaevidovanie zbrane a vydanie preukazu zbrane.</p>
@@ -247,42 +269,6 @@
           </section>
         </section>
 
-        <aside class="panel action-panel" aria-labelledby="actionsTitle">
-          <div class="section-heading">
-            <span>04</span>
-            <div>
-              <h2 id="actionsTitle">Výstupy</h2>
-              <p>Stiahnuť môžeš aktívny formulár alebo obidva naraz.</p>
-            </div>
-          </div>
-
-          <div class="button-stack">
-            <button type="button" class="primary" data-download-active>
-              Stiahnuť vybraný formulár
-            </button>
-            <button type="button" data-download="both">Stiahnuť oba</button>
-            <button type="button" class="danger" id="clearData">
-              Vymazať uložené údaje
-            </button>
-          </div>
-
-          <dl class="template-list">
-            <div>
-              <dt>Profil</dt>
-              <dd>meno, adresa, kontakty, ZP/ZL</dd>
-            </div>
-            <div>
-              <dt>ZP-4</dt>
-              <dd>vlastné údaje nákupného povolenia</dd>
-            </div>
-            <div>
-              <dt>ZP-6</dt>
-              <dd>vlastné údaje zaevidovania zbrane</dd>
-            </div>
-          </dl>
-
-          <p class="status" id="status" role="status" aria-live="polite"></p>
-        </aside>
       </form>
     </main>
 

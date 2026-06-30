@@ -6,15 +6,14 @@
     profile: "zpForms.profile.v2",
     zp4: "zpForms.zp4.v1",
     zp6: "zpForms.zp6.v1",
-    activeForm: "zpForms.activeForm.v1",
+    activeView: "zpForms.activeView.v1",
   };
 
   const stateNode = document.getElementById("saveState");
   const statusNode = document.getElementById("status");
   const form = document.getElementById("dataForm");
-  const activeDownloadButton = document.querySelector("[data-download-active]");
   const isFileProtocol = window.location.protocol === "file:";
-  let activeForm = localStorage.getItem(STORAGE_KEYS.activeForm) || "zp4";
+  let activeView = localStorage.getItem(STORAGE_KEYS.activeView) || "profile";
 
   const today = new Date().toISOString().slice(0, 10);
   const PROFILE_DEFAULTS = {
@@ -136,11 +135,8 @@
   form.addEventListener("input", handleInput);
   form.addEventListener("change", handleInput);
   document.getElementById("clearData").addEventListener("click", clearData);
-  document.querySelectorAll("[data-form-select]").forEach((button) => {
-    button.addEventListener("click", () => setActiveForm(button.dataset.formSelect));
-  });
-  activeDownloadButton.addEventListener("click", async () => {
-    await downloadTarget(activeForm);
+  document.querySelectorAll("[data-view-select]").forEach((button) => {
+    button.addEventListener("click", () => setActiveView(button.dataset.viewSelect));
   });
 
   document.querySelectorAll("[data-download]").forEach((button) => {
@@ -161,26 +157,23 @@
     saveScope("profile");
     saveScope("zp4");
     saveScope("zp6");
-    setActiveForm(activeForm, false);
+    setActiveView(activeView, false);
     markSaved("Uložené lokálne");
   }
 
-  function setActiveForm(formKey, persist = true) {
-    activeForm = FORM_CONFIGS[formKey] ? formKey : "zp4";
-    if (persist) localStorage.setItem(STORAGE_KEYS.activeForm, activeForm);
+  function setActiveView(viewKey, persist = true) {
+    activeView = document.querySelector(`[data-view-panel="${viewKey}"]`) ? viewKey : "profile";
+    if (persist) localStorage.setItem(STORAGE_KEYS.activeView, activeView);
 
-    document.querySelectorAll("[data-form-panel]").forEach((panel) => {
-      panel.hidden = panel.dataset.formPanel !== activeForm;
+    document.querySelectorAll("[data-view-panel]").forEach((panel) => {
+      panel.hidden = panel.dataset.viewPanel !== activeView;
     });
 
-    document.querySelectorAll("[data-form-select]").forEach((button) => {
-      const isActive = button.dataset.formSelect === activeForm;
+    document.querySelectorAll("[data-view-select]").forEach((button) => {
+      const isActive = button.dataset.viewSelect === activeView;
       button.setAttribute("aria-pressed", String(isActive));
     });
 
-    if (activeDownloadButton) {
-      activeDownloadButton.textContent = activeForm === "zp4" ? "Stiahnuť ZP-4" : "Stiahnuť ZP-6";
-    }
   }
 
   function hydrateProfile(data) {
@@ -254,6 +247,7 @@
   function clearData() {
     localStorage.removeItem(LEGACY_STORAGE_KEY);
     Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
+    activeView = "profile";
     hydrateForm();
     setStatus("Uložené údaje boli vymazané.");
   }
@@ -490,7 +484,7 @@
   }
 
   function setBusy(isBusy) {
-    document.querySelectorAll("[data-download], [data-download-active]").forEach((button) => {
+    document.querySelectorAll("[data-download]").forEach((button) => {
       button.disabled = isBusy;
     });
   }

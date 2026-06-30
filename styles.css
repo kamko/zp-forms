@@ -36,7 +36,7 @@ textarea {
 }
 
 .shell {
-  width: min(1320px, calc(100% - 32px));
+  width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
   padding: 22px 0 36px;
 }
@@ -96,24 +96,23 @@ h2 {
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(320px, 0.44fr) minmax(440px, 1fr) 280px;
+  grid-template-columns: 260px minmax(0, 1fr);
   gap: 16px;
   align-items: start;
 }
 
-.profile-panel,
-.action-panel {
+.workspace-nav {
   position: sticky;
   top: 16px;
 }
 
-.forms-column {
+.workspace-column {
   display: grid;
   gap: 16px;
   min-width: 0;
 }
 
-.form-panel[hidden] {
+[data-view-panel][hidden] {
   display: none;
 }
 
@@ -253,42 +252,78 @@ h2 {
   gap: 10px;
 }
 
-.form-switch {
+.nav-actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
 }
 
-.form-switch button {
+.workspace-list {
   display: grid;
-  min-height: 74px;
-  align-content: center;
-  gap: 4px;
-  padding: 12px;
+  gap: 8px;
+}
+
+.workspace-list button {
+  display: grid;
+  min-height: 68px;
+  align-content: start;
+  gap: 5px;
+  padding: 12px 13px;
   text-align: left;
 }
 
-.form-switch button strong {
+.workspace-list button strong {
   color: var(--ink);
   font-size: 1rem;
   line-height: 1.1;
 }
 
-.form-switch button span {
+.workspace-list button span {
   color: var(--muted);
   font-size: 0.84rem;
   line-height: 1.25;
 }
 
-.form-switch button[aria-pressed="true"] {
+.workspace-list button[aria-pressed="true"] {
   border-color: var(--accent);
   background: var(--accent-soft);
   box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent), transparent 88%);
 }
 
-.form-switch button[aria-pressed="true"] strong,
-.form-switch button[aria-pressed="true"] span {
+.workspace-list button[aria-pressed="true"] strong,
+.workspace-list button[aria-pressed="true"] span {
   color: var(--accent-hover);
+}
+
+.profile-groups {
+  display: grid;
+  gap: 18px;
+}
+
+.field-group {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.field-group:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.field-group h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.field-group .field,
+.field-group .segmented {
+  margin-bottom: 0;
 }
 
 button {
@@ -351,33 +386,9 @@ button.danger:focus-visible {
   outline: 3px solid color-mix(in oklch, var(--danger), transparent 76%);
 }
 
-.template-list {
-  display: grid;
-  gap: 0;
-  margin: 16px 0 0;
-  border-top: 1px solid var(--line);
-}
-
-.template-list div {
-  padding: 11px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.template-list dt {
-  color: var(--ink);
-  font-weight: 820;
-}
-
-.template-list dd {
-  margin: 2px 0 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.35;
-}
-
 .status {
   min-height: 22px;
-  margin-top: 12px;
+  margin: 0;
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.35;
@@ -385,12 +396,7 @@ button.danger:focus-visible {
 
 @media (max-width: 1120px) {
   .layout {
-    grid-template-columns: minmax(300px, 0.52fr) minmax(420px, 1fr);
-  }
-
-  .action-panel {
-    position: static;
-    grid-column: 1 / -1;
+    grid-template-columns: 240px minmax(0, 1fr);
   }
 }
 
@@ -407,11 +413,7 @@ button.danger:focus-visible {
     grid-template-columns: 1fr;
   }
 
-  .profile-panel {
+  .workspace-nav {
     position: static;
-  }
-
-  .form-switch {
-    grid-template-columns: 1fr;
   }
 }
