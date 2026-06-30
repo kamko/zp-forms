@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="sk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ZP formuláre</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Zbrojný preukaz</p>
+          <h1>Vyplnenie formulárov</h1>
+        </div>
+        <div class="save-state" id="saveState">Uložené lokálne</div>
+      </header>
+
+      <form class="layout" id="dataForm">
+        <section class="panel identity-panel" aria-labelledby="identityTitle">
+          <div class="section-heading">
+            <span>01</span>
+            <h2 id="identityTitle">Osobné údaje</h2>
+          </div>
+
+          <label class="field field-wide">
+            <span>Titul, meno a priezvisko</span>
+            <input name="identityName" autocomplete="name" />
+          </label>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Rodné číslo</span>
+              <input name="birthNumber" inputmode="text" />
+            </label>
+            <label class="field">
+              <span>Dátum narodenia</span>
+              <input name="birthDate" type="date" />
+            </label>
+          </div>
+
+          <fieldset class="segmented">
+            <legend>Adresa v ZP-4</legend>
+            <label>
+              <input type="radio" name="addressType" value="permanent" />
+              <span>Trvalý pobyt</span>
+            </label>
+            <label>
+              <input type="radio" name="addressType" value="temporary" />
+              <span>Prechodný pobyt</span>
+            </label>
+          </fieldset>
+
+          <label class="field field-wide">
+            <span>Adresa trvalého pobytu</span>
+            <input name="permanentAddress" autocomplete="street-address" />
+          </label>
+
+          <label class="field field-wide">
+            <span>Adresa prechodného pobytu</span>
+            <input name="temporaryAddress" autocomplete="street-address" />
+          </label>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Telefonický kontakt</span>
+              <input name="phone" autocomplete="tel" />
+            </label>
+            <label class="field">
+              <span>E-mail</span>
+              <input name="email" autocomplete="email" type="email" />
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Séria a číslo ZP/ZL</span>
+              <input name="permitNumber" />
+            </label>
+            <label class="field">
+              <span>Skupina/y ZP/ZL</span>
+              <input name="permitGroups" />
+            </label>
+          </div>
+
+          <fieldset class="segmented">
+            <legend>Typ dokladu v ZP-6</legend>
+            <label>
+              <input type="radio" name="documentType" value="zp" />
+              <span>ZP</span>
+            </label>
+            <label>
+              <input type="radio" name="documentType" value="zl" />
+              <span>ZL</span>
+            </label>
+          </fieldset>
+        </section>
+
+        <section class="panel weapon-panel" aria-labelledby="weaponTitle">
+          <div class="section-heading">
+            <span>02</span>
+            <h2 id="weaponTitle">Údaje o zbrani</h2>
+          </div>
+
+          <label class="field field-wide">
+            <span>Druh zbrane a kategória</span>
+            <input name="weaponKind" />
+          </label>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Značka zbrane</span>
+              <input name="weaponBrand" />
+            </label>
+            <label class="field">
+              <span>Typ / model</span>
+              <input name="weaponModel" />
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Výrobné číslo</span>
+              <input name="weaponSerial" />
+            </label>
+            <label class="field">
+              <span>Kaliber</span>
+              <input name="weaponCaliber" />
+            </label>
+          </div>
+
+          <label class="field field-wide">
+            <span>Nadobudnutá od koho</span>
+            <input name="acquiredFrom" />
+          </label>
+
+          <label class="field field-wide">
+            <span>Odôvodnenie žiadosti</span>
+            <textarea name="justification" rows="3"></textarea>
+          </label>
+
+          <label class="field field-wide">
+            <span>Číslo a dátum rozhodnutia o výnimke</span>
+            <input name="exceptionDecision" />
+          </label>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Miesto</span>
+              <input name="place" />
+            </label>
+            <label class="field">
+              <span>Dátum podpisu</span>
+              <input name="formDate" type="date" />
+            </label>
+          </div>
+        </section>
+
+        <aside class="panel action-panel" aria-labelledby="actionsTitle">
+          <div class="section-heading">
+            <span>03</span>
+            <h2 id="actionsTitle">PDF výstupy</h2>
+          </div>
+
+          <div class="button-stack">
+            <button type="button" class="primary" data-download="zp4">
+              Stiahnuť ZP-4
+            </button>
+            <button type="button" class="primary" data-download="zp6">
+              Stiahnuť ZP-6
+            </button>
+            <button type="button" data-download="both">Stiahnuť oba</button>
+          </div>
+
+          <dl class="template-list">
+            <div>
+              <dt>ZP-4</dt>
+              <dd>nákupné povolenie</dd>
+            </div>
+            <div>
+              <dt>ZP-6</dt>
+              <dd>zaevidovanie zbrane</dd>
+            </div>
+          </dl>
+
+          <button type="button" class="danger" id="clearData">
+            Vymazať uložené údaje
+          </button>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </aside>
+      </form>
+    </main>
+
+    <script src="vendor/pdf-lib.min.js"></script>
+    <script src="vendor/fontkit.umd.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
