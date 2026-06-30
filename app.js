@@ -6,12 +6,15 @@
     profile: "zpForms.profile.v2",
     zp4: "zpForms.zp4.v1",
     zp6: "zpForms.zp6.v1",
+    activeForm: "zpForms.activeForm.v1",
   };
 
   const stateNode = document.getElementById("saveState");
   const statusNode = document.getElementById("status");
   const form = document.getElementById("dataForm");
+  const activeDownloadButton = document.querySelector("[data-download-active]");
   const isFileProtocol = window.location.protocol === "file:";
+  let activeForm = localStorage.getItem(STORAGE_KEYS.activeForm) || "zp4";
 
   const today = new Date().toISOString().slice(0, 10);
   const PROFILE_DEFAULTS = {
@@ -133,29 +136,16 @@
   form.addEventListener("input", handleInput);
   form.addEventListener("change", handleInput);
   document.getElementById("clearData").addEventListener("click", clearData);
+  document.querySelectorAll("[data-form-select]").forEach((button) => {
+    button.addEventListener("click", () => setActiveForm(button.dataset.formSelect));
+  });
+  activeDownloadButton.addEventListener("click", async () => {
+    await downloadTarget(activeForm);
+  });
 
   document.querySelectorAll("[data-download]").forEach((button) => {
     button.addEventListener("click", async () => {
-      const target = button.dataset.download;
-      try {
-        setBusy(true);
-        if (isFileProtocol) {
-          throw new Error("PDF sa nedá načítať cez file://. Spusti: python -m http.server 5173 a otvor http://127.0.0.1:5173");
-        }
-        setStatus("Pripravujem PDF...");
-        if (target === "both") {
-          await fillAndDownload("zp4");
-          await fillAndDownload("zp6");
-        } else {
-          await fillAndDownload(target);
-        }
-        setStatus("PDF je pripravené.");
-      } catch (error) {
-        console.error(error);
-        setStatus(error.message || "PDF sa nepodarilo pripraviť.");
-      } finally {
-        setBusy(false);
-      }
+      await downloadTarget(button.dataset.download);
     });
   });
 
@@ -171,7 +161,26 @@
     saveScope("profile");
     saveScope("zp4");
     saveScope("zp6");
+    setActiveForm(activeForm, false);
     markSaved("Uložené lokálne");
+  }
+
+  function setActiveForm(formKey, persist = true) {
+    activeForm = FORM_CONFIGS[formKey] ? formKey : "zp4";
+    if (persist) localStorage.setItem(STORAGE_KEYS.activeForm, activeForm);
+
+    document.querySelectorAll("[data-form-panel]").forEach((panel) => {
+      panel.hidden = panel.dataset.formPanel !== activeForm;
+    });
+
+    document.querySelectorAll("[data-form-select]").forEach((button) => {
+      const isActive = button.dataset.formSelect === activeForm;
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+
+    if (activeDownloadButton) {
+      activeDownloadButton.textContent = activeForm === "zp4" ? "Stiahnuť ZP-4" : "Stiahnuť ZP-6";
+    }
   }
 
   function hydrateProfile(data) {
@@ -287,6 +296,28 @@
     markSaved.timer = window.setTimeout(() => {
       stateNode.textContent = "Uložené lokálne";
     }, 900);
+  }
+
+  async function downloadTarget(target) {
+    try {
+      setBusy(true);
+      if (isFileProtocol) {
+        throw new Error("PDF sa nedá načítať cez file://. Spusti: python -m http.server 5173 a otvor http://127.0.0.1:5173");
+      }
+      setStatus("Pripravujem PDF...");
+      if (target === "both") {
+        await fillAndDownload("zp4");
+        await fillAndDownload("zp6");
+      } else {
+        await fillAndDownload(target);
+      }
+      setStatus("PDF je pripravené.");
+    } catch (error) {
+      console.error(error);
+      setStatus(error.message || "PDF sa nepodarilo pripraviť.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function fillAndDownload(formKey) {
@@ -459,7 +490,7 @@
   }
 
   function setBusy(isBusy) {
-    document.querySelectorAll("[data-download]").forEach((button) => {
+    document.querySelectorAll("[data-download], [data-download-active]").forEach((button) => {
       button.disabled = isBusy;
     });
   }

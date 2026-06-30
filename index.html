@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ZP formuláre</title>
+    <link rel="icon" href="data:," />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -100,9 +101,30 @@
         </section>
 
         <section class="forms-column" aria-label="Formuláre">
-          <section class="panel form-panel" aria-labelledby="zp4Title">
+          <section class="panel chooser-panel" aria-labelledby="chooserTitle">
             <div class="section-heading">
               <span>02</span>
+              <div>
+                <h2 id="chooserTitle">Vybrať formulár</h2>
+                <p>Profil ostáva spoločný, údaje nižšie sú iba pre vybraný formulár.</p>
+              </div>
+            </div>
+
+            <div class="form-switch" role="tablist" aria-label="Výber formulára">
+              <button type="button" data-form-select="zp4" aria-pressed="true">
+                <strong>ZP-4</strong>
+                <span>Nákupné povolenie</span>
+              </button>
+              <button type="button" data-form-select="zp6" aria-pressed="false">
+                <strong>ZP-6</strong>
+                <span>Zaevidovanie zbrane</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="panel form-panel" data-form-panel="zp4" aria-labelledby="zp4Title">
+            <div class="section-heading">
+              <span>03</span>
               <div>
                 <h2 id="zp4Title">ZP-4: nákupné povolenie</h2>
                 <p>Údaje iba pre žiadosť o vydanie nákupného povolenia.</p>
@@ -162,7 +184,7 @@
             </button>
           </section>
 
-          <section class="panel form-panel" aria-labelledby="zp6Title">
+          <section class="panel form-panel" data-form-panel="zp6" aria-labelledby="zp6Title" hidden>
             <div class="section-heading">
               <span>03</span>
               <div>
@@ -229,12 +251,15 @@
           <div class="section-heading">
             <span>04</span>
             <div>
-              <h2 id="actionsTitle">Akcie</h2>
-              <p>Profil a formuláre sa ukladajú oddelene.</p>
+              <h2 id="actionsTitle">Výstupy</h2>
+              <p>Stiahnuť môžeš aktívny formulár alebo obidva naraz.</p>
             </div>
           </div>
 
           <div class="button-stack">
+            <button type="button" class="primary" data-download-active>
+              Stiahnuť vybraný formulár
+            </button>
             <button type="button" data-download="both">Stiahnuť oba</button>
             <button type="button" class="danger" id="clearData">
               Vymazať uložené údaje
